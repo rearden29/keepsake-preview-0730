@@ -103,8 +103,18 @@
   /* Mobile: captions leave the video (they overflow the short 16:9 strip on
      narrow screens) and sit in a coral bubble below it. Videos inset with
      rounded corners like the desktop look. */
+  /* Mobile first screen is fully composed: logo on top, phones center,
+     headline + badge at the bottom. No cream voids. */
+  .mhero { display:none; }
   @media (max-width:700px){
     #film .titles { padding-top:7vh; }
+    .mhero {
+      display:block; position:absolute; left:16px; right:16px; bottom:60px;
+      text-align:center; pointer-events:none;
+    }
+    .mhero h1 { font-size:24px; font-weight:800; line-height:1.25; color:var(--navy); }
+    .mhero .badge { pointer-events:auto; }
+    main .hero { display:none; } /* its content lives on the film screen instead */
     .story { margin:36px 16px; }
     .story video, .story img.fallback { border-radius:20px; }
     .story .caption {
@@ -131,6 +141,10 @@
     <div class="titles" id="filmTitles">
       <div class="wordmark">Keepsake!</div>
       <div class="tagline">Create a Keepsake! 📸</div>
+    </div>
+    <div class="mhero">
+      <h1>A photographer at your spot,<br>in minutes.</h1>
+      <span class="badge">Coming soon to the App Store</span>
     </div>
     <div class="cue" id="filmCue">Scroll</div>
   </div>
@@ -271,7 +285,7 @@
       // land within a few px of the screen edge.
       var sx = im.width * 0.155, sw = im.width * 0.71;
       var dh = im.height * (cw / sw);
-      ctx.drawImage(im, sx, 0, sw, im.height, 0, ch * 0.28, cw, dh);
+      ctx.drawImage(im, sx, 0, sw, im.height, 0, ch * 0.27, cw, dh);
     } else {
       var s = Math.max(cw / im.width, ch / im.height);
       var w = im.width * s, h = im.height * s;
