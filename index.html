@@ -100,15 +100,6 @@
   .story h2 { font-size:clamp(22px,3.4vw,32px); font-weight:800; line-height:1.2; }
   .story p { font-size:15px; opacity:.92; margin-top:6px; max-width:560px; font-weight:700; }
   @media (min-width:900px){ .story video, .story img.fallback { border-radius:28px; } .story { max-width:1080px; margin-left:auto; margin-right:auto; } .story .caption{ padding:48px 34px 30px; border-radius:0 0 28px 28px; } }
-  /* Mobile film: no letterbox dead space. The stage compacts to logo + film,
-     stacked (logo on top), and the canvas is exactly the film's 16:9 box. */
-  @media (max-width:700px){
-    #film .stage { height:auto; display:flex; flex-direction:column; padding-bottom:18px; }
-    #film .titles { position:static; order:0; padding:26px 16px 14px; pointer-events:auto; }
-    #film canvas { position:static; order:1; display:block; width:100%; height:auto; aspect-ratio:16/9; }
-    #film .poster { order:1; }
-    #film .cue { position:static; order:2; margin-top:14px; }
-  }
   /* Mobile: captions leave the video (they overflow the short 16:9 strip on
      narrow screens) and sit in a coral bubble below it. Videos inset with
      rounded corners like the desktop look. */
@@ -193,7 +184,7 @@
     <source src="media/clip5.mp4" type="video/mp4">
   </video>
   <div class="caption"><div class="inner">
-    <h2>Whatever the occasion,<br>we shoot it.</h2>
+    <h2>Whatever the occasion.<br>We Shoot it.</h2>
     <p>Keepsake photographers train for it all. Family portraits, dog parents, proposals, birthdays, candid life moments, influencer content, headshots. If you want photos of it, a Keepsake photographer is ready for it. Whatever your moment is, book it.</p>
   </div></div>
 </section>
@@ -203,7 +194,7 @@
     <source src="media/clip4b.mp4" type="video/mp4">
   </video>
   <div class="caption promise-caption"><div class="inner">
-    <h2>Your photos are yours. Full stop.</h2>
+    <h2>Your photos are yours. Full&nbsp;stop.</h2>
     <p>Every Keepsake photo is encrypted in transit and in storage. Photographers shoot inside the app, and the instant your album is delivered, their access is revoked and the copies on their phone are erased. It is enforced by our servers at every layer. No stranger ever walks away with pictures of your family. That is not a policy we wrote. It is how the system is built.</p>
   </div></div>
 </section>
@@ -272,16 +263,17 @@
     var im = imgs[j];
     var cw = canvas.width, ch = canvas.height;
     ctx.clearRect(0, 0, cw, ch);
+    var s = Math.max(cw / im.width, ch / im.height);
+    var w = im.width * s, h = im.height * s;
     if (ch > cw) {
-      // Portrait (phones): cover-fit would crop the film to a sliver. Fit the
-      // whole frame, letterboxed on the page cream (no backdrop fill; a
-      // stretched copy looked like a broken mirror on real phones).
-      var sc = Math.min(cw / im.width, ch / im.height);
-      var fw = im.width * sc, fh = im.height * sc;
-      ctx.drawImage(im, (cw - fw) / 2, (ch - fh) / 2, fw, fh);
+      // Portrait (phones): fill the screen like desktop. A CENTERED crop of
+      // the wide film lands on the gap between the two phones, so aim the
+      // crop at the iPhone (its center sits ~1/3 across the frame).
+      var dx = cw / 2 - w * 0.33;
+      if (dx > 0) dx = 0;
+      if (dx < cw - w) dx = cw - w;
+      ctx.drawImage(im, dx, (ch - h) / 2, w, h);
     } else {
-      var s = Math.max(cw / im.width, ch / im.height);
-      var w = im.width * s, h = im.height * s;
       ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
     }
   }
