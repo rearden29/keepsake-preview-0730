@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<!-- .no-motion is the default: no JS (or reduced motion) gets a plain page with a
+     poster. The script REMOVES the class only when the scroll film can actually run. -->
+<html lang="en" class="no-motion">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keepsake! — photographers on demand</title>
+<meta name="description" content="Keepsake connects you with a nearby photographer in minutes. They come to you, shoot in the app, and your photos arrive instantly — the photographer never keeps them.">
+<link rel="canonical" href="https://sharedkeepsake.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Keepsake">
+<meta property="og:title" content="Keepsake! — photographers on demand">
+<meta property="og:description" content="A photographer at your spot, in minutes. Photos delivered instantly — they never keep a copy.">
+<meta property="og:url" content="https://sharedkeepsake.com/">
+<meta property="og:image" content="https://sharedkeepsake.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Keepsake! — photographers on demand">
+<meta name="twitter:description" content="A photographer at your spot, in minutes. Photos delivered instantly — they never keep a copy.">
+<meta name="twitter:image" content="https://sharedkeepsake.com/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Beame Technologies",
+      "alternateName": "Keepsake",
+      "url": "https://sharedkeepsake.com/",
+      "logo": "https://sharedkeepsake.com/og-image.png",
+      "email": "support@beametechnologies.com"
+    },
+    {
+      "@type": "MobileApplication",
+      "name": "Keepsake",
+      "operatingSystem": "iOS",
+      "applicationCategory": "LifestyleApplication",
+      "description": "On-demand photography: a nearby photographer comes to you, shoots in the app, and your photos arrive instantly.",
+      "offers": { "@type": "Offer", "price": "9.99", "priceCurrency": "USD" }
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="hero/poster.webp">
+<style>
+  :root { --coral:#F2685C; --cream:#FDF6EC; --navy:#312F4F; --yellow:#F5B940; --teal:#2FA795; --muted:#6F6C8F; }
+  * { margin:0; box-sizing:border-box; }
+  html { scroll-behavior:auto; }
+  body { font-family:'Nunito',sans-serif; background:var(--cream); color:var(--navy); line-height:1.6; }
+  .wrap { max-width:860px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- the film (scroll-scrubbed hero) ---------- */
+  #film { position:relative; height:340vh; }
+  #film .stage { position:sticky; top:0; height:100vh; overflow:hidden; background:var(--cream); }
+  #film canvas, #film .poster { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #film .poster { display:none; }
+  #film .titles {
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+    justify-content:flex-start; padding-top:12vh; text-align:center; pointer-events:none;
+  }
+  .wordmark { font-size:clamp(52px,9vw,96px); font-weight:800; color:var(--coral); letter-spacing:-2px; line-height:1; }
+  .tagline { font-size:clamp(17px,2.6vw,24px); font-weight:800; color:var(--coral); margin-top:8px; }
+  #film .cue {
+    position:absolute; bottom:26px; left:0; right:0; text-align:center; font-weight:800;
+    font-size:13px; letter-spacing:2px; color:var(--muted); text-transform:uppercase;
+    animation:cuebob 1.8s ease-in-out infinite; pointer-events:none;
+  }
+  @keyframes cuebob { 0%,100%{transform:translateY(0);opacity:.85} 50%{transform:translateY(7px);opacity:.45} }
+
+  /* no-JS / reduced-motion: collapse the film to one framed poster */
+  .no-motion #film { height:auto; }
+  .no-motion #film .stage { position:relative; height:auto; background:none; }
+  .no-motion #film canvas { display:none; }
+  .no-motion #film .poster { display:block; position:relative; height:auto; max-height:80vh; }
+  .no-motion #film .titles { position:relative; padding:64px 0 24px; }
+  .no-motion #film .cue { display:none; }
+
+  /* ---------- content ---------- */
+  .hero { text-align:center; padding:72px 0 8px; }
+  .hero h1 { font-size:clamp(28px,4.6vw,40px); font-weight:800; line-height:1.25; }
+  .hero p { font-size:18px; color:var(--muted); margin-top:14px; max-width:640px; margin-left:auto; margin-right:auto; }
+  .badge { display:inline-block; background:var(--yellow); color:var(--navy); font-weight:800; border-radius:999px; padding:10px 22px; margin-top:26px; font-size:15px; }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin:44px 0 8px; }
+  .step { background:#fff; border:1px solid #F0E1D2; border-radius:20px; padding:22px; }
+  .step .n { width:34px; height:34px; border-radius:50%; background:var(--coral); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .step h3 { font-size:17px; font-weight:800; margin-bottom:6px; }
+  .step p { font-size:14px; color:var(--muted); }
+
+  /* full-bleed video stories */
+  .story { position:relative; margin:64px 0; }
+  .story video, .story img.fallback { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:0; }
+  .story .caption { position:absolute; left:0; right:0; bottom:0; padding:48px 24px 26px;
+    background:linear-gradient(transparent, rgba(20,16,40,.72)); color:#fff; }
+  .story .caption .inner { max-width:860px; margin:0 auto; }
+  .story h2 { font-size:clamp(22px,3.4vw,32px); font-weight:800; line-height:1.2; }
+  .story p { font-size:15px; opacity:.92; margin-top:6px; max-width:560px; }
+  @media (min-width:900px){ .story video, .story img.fallback { border-radius:28px; } .story { max-width:1080px; margin-left:auto; margin-right:auto; } .story .caption{ padding:48px 34px 30px; border-radius:0 0 28px 28px; } }
+
+  .promise { background:var(--navy); color:#F4EEE3; border-radius:24px; padding:34px; margin:24px 0 44px; }
+  .promise h2 { font-size:22px; font-weight:800; color:var(--yellow); margin-bottom:10px; }
+  .promise p { font-size:15px; }
+  footer { border-top:1px solid #F0E1D2; padding:28px 0 48px; text-align:center; font-size:14px; color:var(--muted); }
+  footer a { color:var(--coral); font-weight:700; text-decoration:none; margin:0 10px; }
+</style>
+</head>
+<body>
+
+<!-- ---------- scroll film: two phones rotate in and resolve on the app ---------- -->
+<section id="film" aria-label="Keepsake app on iPhone and Android">
+  <div class="stage">
+    <canvas id="filmCanvas" aria-hidden="true"></canvas>
+    <img class="poster" src="hero/poster.webp" alt="The Keepsake app on two phones, searching for photographers">
+    <div class="titles" id="filmTitles">
+      <div class="wordmark">Keepsake!</div>
+      <div class="tagline">Create a Keepsake! 📸</div>
+    </div>
+    <div class="cue" id="filmCue">Scroll</div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>A photographer at your spot,<br>in minutes.</h1>
+    <p>Request a shoot, watch your photographer arrive live, and get every photo delivered straight to your private album — they never keep a copy.</p>
+    <span class="badge">Coming soon to the App Store</span>
+  </section>
+
+  <section class="steps">
+    <div class="step"><div class="n">1</div><h3>Request</h3><p>Pick your spot and a package — from $9.99 for 5 minutes to $64.99 for an hour. Want pro glass? Pro Camera brings a verified professional camera.</p></div>
+    <div class="step"><div class="n">2</div><h3>Track</h3><p>A nearby photographer accepts and heads your way — you watch them arrive on a live map.</p></div>
+    <div class="step"><div class="n">3</div><h3>Shoot &amp; receive</h3><p>Photos are taken in the app and land in your album as they're shot. Rate your photographer, tip if you loved it.</p></div>
+  </section>
+</main>
+
+<section class="story" aria-label="Booking on the beach">
+  <video muted loop playsinline preload="none" poster="media/clip1-poster.webp" data-story>
+    <source src="media/clip1.mp4" type="video/mp4">
+  </video>
+  <div class="caption"><div class="inner">
+    <h2>The moment is already perfect.<br>Now keep it.</h2>
+    <p>Golden hour, the right spot, everyone's together — book a Keepsake photographer right there, right then.</p>
+  </div></div>
+</section>
+
+<section class="story" aria-label="Shooting in the app">
+  <video muted loop playsinline preload="none" poster="media/clip2-poster.webp" data-story>
+    <source src="media/clip2.mp4" type="video/mp4">
+  </video>
+  <div class="caption"><div class="inner">
+    <h2>Real people. Real cameras.<br>Real quick.</h2>
+    <p>Keepsake photographers shoot inside the app, so every photo lands in your album as it's taken — nothing to send, nothing to chase.</p>
+  </div></div>
+</section>
+
+<section class="story" aria-label="Night photography">
+  <video muted loop playsinline preload="none" poster="media/clip3-poster.webp" data-story>
+    <source src="media/clip3.mp4" type="video/mp4">
+  </video>
+  <div class="caption"><div class="inner">
+    <h2>Any place. Any hour.<br>Any weather.</h2>
+    <p>Snowy nights, city lights, birthday mornings — if there's a Keepsake photographer nearby, your moment gets kept.</p>
+  </div></div>
+</section>
+
+<main class="wrap">
+  <section class="promise">
+    <h2>Your photos are yours. Full stop.</h2>
+    <p>Keepsake photographers shoot inside the app — the instant your photos are delivered, the photographer's access is removed and the copies on their phone are erased. It's not a policy; it's how the system is built.</p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div>
+    <a href="privacy.html">Privacy Policy</a> ·
+    <a href="terms.html">Terms of Service</a> ·
+    <a href="delete-account.html">Delete account</a> ·
+    <a href="mailto:support@beametechnologies.com">Support</a>
+  </div>
+  <div style="margin-top:10px">© 2026 Beame Technologies. All rights reserved. Keepsake is a product of Beame Technologies.</div>
+</footer>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasLibs = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+
+  // Section videos: play only while on screen (and never with reduced motion).
+  var stories = Array.prototype.slice.call(document.querySelectorAll('video[data-story]'));
+  if (!reduced && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { v.play().catch(function () {}); }
+        else { v.pause(); }
+      });
+    }, { threshold: 0.25 });
+    stories.forEach(function (v) { io.observe(v); });
+  }
+
+  // The scroll film — progressive enhancement only.
+  if (reduced || !hasLibs) return; // html keeps its default .no-motion fallback
+  document.documentElement.classList.remove('no-motion');
+
+  var FRAMES = 97;
+  var canvas = document.getElementById('filmCanvas');
+  var ctx = canvas.getContext('2d');
+  var titles = document.getElementById('filmTitles');
+  var cue = document.getElementById('filmCue');
+  var imgs = new Array(FRAMES);
+  var loaded = new Array(FRAMES);
+  var current = 0;
+
+  function src(i) { return 'hero/frames/f' + String(i + 1).padStart(3, '0') + '.webp'; }
+  function load(i, cb) {
+    if (imgs[i]) return;
+    var im = new Image();
+    im.onload = function () { loaded[i] = true; if (cb) cb(i); };
+    im.src = src(i);
+    imgs[i] = im;
+  }
+
+  function draw(i) {
+    // nearest loaded frame at or before i, so scrubbing never blanks
+    var j = i;
+    while (j > 0 && !loaded[j]) j--;
+    if (!loaded[j]) return;
+    var im = imgs[j];
+    var cw = canvas.width, ch = canvas.height;
+    var s = Math.max(cw / im.width, ch / im.height);
+    var w = im.width * s, h = im.height * s;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
+  }
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(canvas.clientWidth * dpr);
+    canvas.height = Math.round(canvas.clientHeight * dpr);
+    draw(current);
+  }
+  window.addEventListener('resize', resize);
+
+  // First frame ASAP, then the rest in order (small files; ~2MB total).
+  load(0, function () { resize(); });
+  var next = 1;
+  (function pump() {
+    if (next >= FRAMES) return;
+    load(next, function () { next++; pump(); });
+  })();
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  var lenis = null;
+  if (typeof Lenis !== 'undefined') {
+    lenis = new Lenis({ lerp: 0.12 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  var state = { f: 0 };
+  gsap.to(state, {
+    f: FRAMES - 1,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#film',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.35,
+      onUpdate: function (self) {
+        current = Math.round(state.f);
+        draw(current);
+        // wordmark holds through the first beat, then gives way to the film
+        var p = self.progress;
+        titles.style.opacity = String(Math.max(0, 1 - p * 3.2));
+        cue.style.opacity = p > 0.04 ? '0' : '';
+      }
+    }
+  });
+
+  resize();
+})();
+</script>
+</body>
+</html>
