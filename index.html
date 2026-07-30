@@ -100,6 +100,15 @@
   .story h2 { font-size:clamp(22px,3.4vw,32px); font-weight:800; line-height:1.2; }
   .story p { font-size:15px; opacity:.92; margin-top:6px; max-width:560px; font-weight:700; }
   @media (min-width:900px){ .story video, .story img.fallback { border-radius:28px; } .story { max-width:1080px; margin-left:auto; margin-right:auto; } .story .caption{ padding:48px 34px 30px; border-radius:0 0 28px 28px; } }
+  /* Mobile film: no letterbox dead space. The stage compacts to logo + film,
+     stacked (logo on top), and the canvas is exactly the film's 16:9 box. */
+  @media (max-width:700px){
+    #film .stage { height:auto; display:flex; flex-direction:column; padding-bottom:18px; }
+    #film .titles { position:static; order:0; padding:26px 16px 14px; pointer-events:auto; }
+    #film canvas { position:static; order:1; display:block; width:100%; height:auto; aspect-ratio:16/9; }
+    #film .poster { order:1; }
+    #film .cue { position:static; order:2; margin-top:14px; }
+  }
   /* Mobile: captions leave the video (they overflow the short 16:9 strip on
      narrow screens) and sit in a coral bubble below it. Videos inset with
      rounded corners like the desktop look. */
