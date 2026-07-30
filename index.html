@@ -65,12 +65,6 @@
   }
   .wordmark { font-size:clamp(52px,9vw,96px); font-weight:800; color:var(--coral); letter-spacing:-2px; line-height:1; }
   .tagline { font-size:clamp(17px,2.6vw,24px); font-weight:800; color:var(--coral); margin-top:8px; }
-  #film .cue {
-    position:absolute; bottom:26px; left:0; right:0; text-align:center; font-weight:800;
-    font-size:13px; letter-spacing:2px; color:var(--muted); text-transform:uppercase;
-    animation:cuebob 1.8s ease-in-out infinite; pointer-events:none;
-  }
-  @keyframes cuebob { 0%,100%{transform:translateY(0);opacity:.85} 50%{transform:translateY(7px);opacity:.45} }
 
   /* no-JS / reduced-motion: collapse the film to one framed poster */
   .no-motion #film { height:auto; }
@@ -78,7 +72,6 @@
   .no-motion #film canvas { display:none; }
   .no-motion #film .poster { display:block; position:relative; height:auto; max-height:80vh; }
   .no-motion #film .titles { position:relative; padding:64px 0 24px; }
-  .no-motion #film .cue { display:none; }
 
   /* ---------- content ---------- */
   .hero { text-align:center; padding:72px 0 8px; }
@@ -103,21 +96,13 @@
   /* Mobile: captions leave the video (they overflow the short 16:9 strip on
      narrow screens) and sit in a coral bubble below it. Videos inset with
      rounded corners like the desktop look. */
-  /* Mobile first screen is fully composed: logo on top, phones center,
-     headline + badge at the bottom. No cream voids. */
-  .mhero { display:none; }
   @media (max-width:700px){
     /* film strip starts at the very top; the wordmark layers OVER it,
-       vertically centered on the strip (strip height = 79.2vw at this crop) */
+       vertically centered on the strip (strip height = 79.2vw at this crop).
+       The film section is shorter on mobile so the first video arrives right
+       as the rotation finishes (no long empty stretch under the strip). */
+    #film { height:170vh; }
     #film .titles { padding-top:0; height:79.2vw; justify-content:center; }
-    .mhero {
-      display:block; position:absolute; left:16px; right:16px;
-      top:calc(79.2vw + 20px); /* right under the film strip */
-      text-align:center; pointer-events:none;
-    }
-    .mhero h1 { font-size:24px; font-weight:800; line-height:1.25; color:var(--navy); }
-    .mhero .badge { pointer-events:auto; }
-    main .hero { display:none; } /* its content lives on the film screen instead */
     .story { margin:36px 16px; }
     .story video, .story img.fallback { border-radius:20px; }
     .story .caption {
@@ -145,27 +130,8 @@
       <div class="wordmark">Keepsake!</div>
       <div class="tagline">Create a Keepsake! 📸</div>
     </div>
-    <div class="mhero">
-      <h1>A photographer at your spot,<br>in minutes.</h1>
-      <span class="badge">Coming soon to the App Store</span>
-    </div>
-    <div class="cue" id="filmCue">Scroll</div>
   </div>
 </section>
-
-<main class="wrap">
-  <section class="hero">
-    <h1>A photographer at your spot,<br>in minutes.</h1>
-    <p>Request a shoot, watch your photographer arrive live, and get every photo delivered straight to your private album. Photographers never receive or keep a copy.</p>
-    <span class="badge">Coming soon to the App Store</span>
-  </section>
-
-  <section class="steps">
-    <div class="step"><div class="n">1</div><h3>Request</h3><p>Pick your spot and a package, from $9.99 for 5 minutes to $64.99 for an hour. Want pro glass? Pro Camera brings a verified professional camera.</p></div>
-    <div class="step"><div class="n">2</div><h3>Track</h3><p>A nearby photographer accepts and heads your way. You watch them arrive on a live map.</p></div>
-    <div class="step"><div class="n">3</div><h3>Shoot &amp; Receive</h3><p>Photos are taken in the app and land in your album as they're shot. Rate your photographer, tip if you loved it.</p></div>
-  </section>
-</main>
 
 <section class="story" aria-label="Booking on the beach">
   <video muted loop playsinline preload="none" poster="media/clip1-poster.webp" data-story>
@@ -217,6 +183,20 @@
   </div></div>
 </section>
 
+<main class="wrap">
+  <section class="hero">
+    <h1>A photographer at your spot,<br>in minutes.</h1>
+    <p>Request a shoot, watch your photographer arrive live, and get every photo delivered straight to your private album. Photographers never receive or keep a copy.</p>
+    <span class="badge">Coming soon to the App Store</span>
+  </section>
+
+  <section class="steps">
+    <div class="step"><div class="n">1</div><h3>Request</h3><p>Pick your spot and a package, from $9.99 for 5 minutes to $64.99 for an hour. Want pro glass? Pro Camera brings a verified professional camera.</p></div>
+    <div class="step"><div class="n">2</div><h3>Track</h3><p>A nearby photographer accepts and heads your way. You watch them arrive on a live map.</p></div>
+    <div class="step"><div class="n">3</div><h3>Shoot &amp; Receive</h3><p>Photos are taken in the app and land in your album as they're shot. Rate your photographer, tip if you loved it.</p></div>
+  </section>
+</main>
+
 <footer class="wrap">
   <div>
     <a href="privacy.html">Privacy Policy</a> ·
@@ -259,7 +239,6 @@
   var canvas = document.getElementById('filmCanvas');
   var ctx = canvas.getContext('2d');
   var titles = document.getElementById('filmTitles');
-  var cue = document.getElementById('filmCue');
   var imgs = new Array(FRAMES);
   var loaded = new Array(FRAMES);
   var current = 0;
@@ -337,7 +316,6 @@
         // wordmark holds through the first beat, then gives way to the film
         var p = self.progress;
         titles.style.opacity = String(Math.max(0, 1 - p * 3.2));
-        cue.style.opacity = p > 0.04 ? '0' : '';
       }
     }
   });
