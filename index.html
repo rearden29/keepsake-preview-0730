@@ -104,6 +104,7 @@
      narrow screens) and sit in a coral bubble below it. Videos inset with
      rounded corners like the desktop look. */
   @media (max-width:700px){
+    #film .titles { padding-top:7vh; }
     .story { margin:36px 16px; }
     .story video, .story img.fallback { border-radius:20px; }
     .story .caption {
@@ -263,17 +264,17 @@
     var im = imgs[j];
     var cw = canvas.width, ch = canvas.height;
     ctx.clearRect(0, 0, cw, ch);
-    var s = Math.max(cw / im.width, ch / im.height);
-    var w = im.width * s, h = im.height * s;
     if (ch > cw) {
-      // Portrait (phones): fill the screen like desktop. A CENTERED crop of
-      // the wide film lands on the gap between the two phones, so aim the
-      // crop at the iPhone (its center sits ~1/3 across the frame).
-      var dx = cw / 2 - w * 0.33;
-      if (dx > 0) dx = 0;
-      if (dx < cw - w) dx = cw - w;
-      ctx.drawImage(im, dx, (ch - h) / 2, w, h);
+      // Portrait (phones): BOTH phones, big. Crop the film sideways to just
+      // the pair (they live between ~15.5% and ~86.5% of the frame width) and
+      // span the full screen width, seated below the wordmark. Their edges
+      // land within a few px of the screen edge.
+      var sx = im.width * 0.155, sw = im.width * 0.71;
+      var dh = im.height * (cw / sw);
+      ctx.drawImage(im, sx, 0, sw, im.height, 0, ch * 0.28, cw, dh);
     } else {
+      var s = Math.max(cw / im.width, ch / im.height);
+      var w = im.width * s, h = im.height * s;
       ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
     }
   }
