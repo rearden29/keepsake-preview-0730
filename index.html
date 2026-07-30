@@ -97,15 +97,8 @@
      narrow screens) and sit in a coral bubble below it. Videos inset with
      rounded corners like the desktop look. */
   @media (max-width:700px){
-    /* film strip starts at the very top; the wordmark layers OVER it,
-       vertically centered on the strip (strip height = 79.2vw at this crop).
-       The film section is shorter on mobile so the first video arrives right
-       as the rotation finishes (no long empty stretch under the strip). */
-    #film { height:170vh; }
-    /* stage is exactly the strip: nothing empty trails it, so the first video
-       hands off directly under the phones when the rotation completes */
-    #film .stage { height:79.2vw; }
-    #film .titles { padding-top:0; height:79.2vw; justify-content:center; }
+    /* Phones get the full desktop treatment: a dedicated 9:16 film fills the
+       locked screen (frame set picked by orientation in the script). */
     .story { margin:36px 16px; }
     .story video, .story img.fallback { border-radius:20px; }
     .story .caption {
@@ -128,7 +121,10 @@
 <section id="film" aria-label="Keepsake app on iPhone and Android">
   <div class="stage">
     <canvas id="filmCanvas" aria-hidden="true"></canvas>
-    <img class="poster" src="hero/poster.webp" alt="The Keepsake app on two phones, searching for photographers">
+    <picture>
+      <source media="(orientation: portrait)" srcset="hero/poster-v.webp">
+      <img class="poster" src="hero/poster.webp" alt="The Keepsake app on two phones, searching for photographers">
+    </picture>
     <div class="titles" id="filmTitles">
       <div class="wordmark">Keepsake!</div>
       <div class="tagline">Create a Keepsake! 📸</div>
@@ -236,63 +232,65 @@
   if (reduced || !hasLibs) return; // html keeps its default .no-motion fallback
   document.documentElement.classList.remove('no-motion');
 
-  // The film has 97 frames but real motion ends at ~80; the tail is the phones
-  // holding still, and scrubbing through it feels like the page is stuck.
-  var FRAMES = 80;
+  // Two films, one per screen shape. Each is trimmed to where its motion
+  // actually stops (the tails are the phones holding still, and scrubbing a
+  // frozen image feels like the page is stuck).
+  var SETS = {
+    wide: { dir: 'hero/frames/',   count: 80, imgs: [], loaded: [], next: 1 },
+    tall: { dir: 'hero/frames-v/', count: 84, imgs: [], loaded: [], next: 1 }
+  };
+  function setKey() { return window.innerHeight > window.innerWidth ? 'tall' : 'wide'; }
+  var active = setKey();
+
   var canvas = document.getElementById('filmCanvas');
   var ctx = canvas.getContext('2d');
   var titles = document.getElementById('filmTitles');
-  var imgs = new Array(FRAMES);
-  var loaded = new Array(FRAMES);
-  var current = 0;
+  var progress = 0;
 
-  function src(i) { return 'hero/frames/f' + String(i + 1).padStart(3, '0') + '.webp'; }
-  function load(i, cb) {
-    if (imgs[i]) return;
+  function load(set, i, cb) {
+    if (set.imgs[i]) { if (set.loaded[i] && cb) cb(); return; }
     var im = new Image();
-    im.onload = function () { loaded[i] = true; if (cb) cb(i); };
-    im.src = src(i);
-    imgs[i] = im;
+    im.onload = function () { set.loaded[i] = true; if (cb) cb(); };
+    im.src = set.dir + 'f' + String(i + 1).padStart(3, '0') + '.webp';
+    set.imgs[i] = im;
+  }
+  function pump(set) {
+    if (set.next >= set.count) return;
+    var i = set.next++;
+    load(set, i, function () { pump(set); });
   }
 
-  function draw(i) {
+  function draw() {
+    var set = SETS[active];
+    var i = Math.round(progress * (set.count - 1));
     // nearest loaded frame at or before i, so scrubbing never blanks
-    var j = i;
-    while (j > 0 && !loaded[j]) j--;
-    if (!loaded[j]) return;
-    var im = imgs[j];
+    while (i > 0 && !set.loaded[i]) i--;
+    if (!set.loaded[i]) return;
+    var im = set.imgs[i];
     var cw = canvas.width, ch = canvas.height;
+    var s = Math.max(cw / im.width, ch / im.height);
+    var w = im.width * s, h = im.height * s;
     ctx.clearRect(0, 0, cw, ch);
-    if (ch > cw) {
-      // Portrait (phones): BOTH phones, big. Crop the film sideways to just
-      // the pair (they live between ~15.5% and ~86.5% of the frame width) and
-      // span the full screen width, seated below the wordmark. Their edges
-      // land within a few px of the screen edge.
-      var sx = im.width * 0.155, sw = im.width * 0.71;
-      var dh = im.height * (cw / sw);
-      ctx.drawImage(im, sx, 0, sw, im.height, 0, 0, cw, dh);
-    } else {
-      var s = Math.max(cw / im.width, ch / im.height);
-      var w = im.width * s, h = im.height * s;
-      ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
-    }
+    ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
   }
 
   function resize() {
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(canvas.clientWidth * dpr);
     canvas.height = Math.round(canvas.clientHeight * dpr);
-    draw(current);
+    var key = setKey();
+    if (key !== active) {
+      active = key;
+      load(SETS[active], 0, draw);
+      pump(SETS[active]); // rotated mid-visit: fetch the other film lazily
+    }
+    draw();
   }
   window.addEventListener('resize', resize);
 
-  // First frame ASAP, then the rest in order (small files; ~2MB total).
-  load(0, function () { resize(); });
-  var next = 1;
-  (function pump() {
-    if (next >= FRAMES) return;
-    load(next, function () { next++; pump(); });
-  })();
+  // First frame of the active film ASAP, then the rest in order (~1-2MB).
+  load(SETS[active], 0, function () { resize(); });
+  pump(SETS[active]);
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -304,9 +302,9 @@
     gsap.ticker.lagSmoothing(0);
   }
 
-  var state = { f: 0 };
+  var state = { p: 0 };
   gsap.to(state, {
-    f: FRAMES - 1,
+    p: 1,
     ease: 'none',
     scrollTrigger: {
       trigger: '#film',
@@ -314,11 +312,10 @@
       end: 'bottom bottom',
       scrub: 0.35,
       onUpdate: function (self) {
-        current = Math.round(state.f);
-        draw(current);
+        progress = state.p;
+        draw();
         // wordmark holds through the first beat, then gives way to the film
-        var p = self.progress;
-        titles.style.opacity = String(Math.max(0, 1 - p * 3.2));
+        titles.style.opacity = String(Math.max(0, 1 - self.progress * 3.2));
       }
     }
   });
