@@ -55,7 +55,7 @@
   .wrap { max-width:860px; margin:0 auto; padding:0 24px; }
 
   /* ---------- the film (scroll-scrubbed hero) ---------- */
-  #film { position:relative; height:340vh; }
+  #film { position:relative; height:280vh; }
   #film .stage { position:sticky; top:0; height:100vh; overflow:hidden; background:var(--cream); }
   #film canvas, #film .poster { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   #film .poster { display:none; }
@@ -222,7 +222,9 @@
   if (reduced || !hasLibs) return; // html keeps its default .no-motion fallback
   document.documentElement.classList.remove('no-motion');
 
-  var FRAMES = 97;
+  // The film has 97 frames but real motion ends at ~80; the tail is the phones
+  // holding still, and scrubbing through it feels like the page is stuck.
+  var FRAMES = 80;
   var canvas = document.getElementById('filmCanvas');
   var ctx = canvas.getContext('2d');
   var titles = document.getElementById('filmTitles');
