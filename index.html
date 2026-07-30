@@ -101,12 +101,17 @@
   .story p { font-size:15px; opacity:.92; margin-top:6px; max-width:560px; font-weight:700; }
   @media (min-width:900px){ .story video, .story img.fallback { border-radius:28px; } .story { max-width:1080px; margin-left:auto; margin-right:auto; } .story .caption{ padding:48px 34px 30px; border-radius:0 0 28px 28px; } }
   /* Mobile: captions leave the video (they overflow the short 16:9 strip on
-     narrow screens) and sit in a solid card below it instead. */
+     narrow screens) and sit in a coral bubble below it. Videos inset with
+     rounded corners like the desktop look. */
   @media (max-width:700px){
-    .story { margin:40px 0; }
-    .story .caption { position:static; background:var(--navy); padding:18px 20px 22px; }
+    .story { margin:36px 16px; }
+    .story video, .story img.fallback { border-radius:20px; }
+    .story .caption {
+      position:static; background:var(--coral); margin-top:10px;
+      border-radius:20px; padding:18px 18px 20px; text-align:center;
+    }
     .story h2 { font-size:22px; }
-    .story p { font-size:14px; }
+    .story p { font-size:14px; margin-left:auto; margin-right:auto; }
   }
 
   .promise-caption { background:linear-gradient(transparent, rgba(49,47,79,.94) 55%); }
@@ -260,9 +265,8 @@
     ctx.clearRect(0, 0, cw, ch);
     if (ch > cw) {
       // Portrait (phones): cover-fit would crop the film to a sliver. Fit the
-      // whole frame instead, over a stretched copy that fills the bands (the
-      // film background is a smooth gradient, so the stretch is invisible).
-      ctx.drawImage(im, 0, 0, cw, ch);
+      // whole frame, letterboxed on the page cream (no backdrop fill; a
+      // stretched copy looked like a broken mirror on real phones).
       var sc = Math.min(cw / im.width, ch / im.height);
       var fw = im.width * sc, fh = im.height * sc;
       ctx.drawImage(im, (cw - fw) / 2, (ch - fh) / 2, fw, fh);
