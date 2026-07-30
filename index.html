@@ -56,7 +56,7 @@
 
   /* ---------- the film (scroll-scrubbed hero) ---------- */
   #film { position:relative; height:280vh; }
-  #film .stage { position:sticky; top:0; height:100vh; overflow:hidden; background:var(--cream); }
+  #film .stage { position:sticky; top:0; height:100vh; height:100svh; overflow:hidden; background:var(--cream); }
   #film canvas, #film .poster { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   #film .poster { display:none; }
   #film .titles {
@@ -100,6 +100,14 @@
   .story h2 { font-size:clamp(22px,3.4vw,32px); font-weight:800; line-height:1.2; }
   .story p { font-size:15px; opacity:.92; margin-top:6px; max-width:560px; font-weight:700; }
   @media (min-width:900px){ .story video, .story img.fallback { border-radius:28px; } .story { max-width:1080px; margin-left:auto; margin-right:auto; } .story .caption{ padding:48px 34px 30px; border-radius:0 0 28px 28px; } }
+  /* Mobile: captions leave the video (they overflow the short 16:9 strip on
+     narrow screens) and sit in a solid card below it instead. */
+  @media (max-width:700px){
+    .story { margin:40px 0; }
+    .story .caption { position:static; background:var(--navy); padding:18px 20px 22px; }
+    .story h2 { font-size:22px; }
+    .story p { font-size:14px; }
+  }
 
   .promise-caption { background:linear-gradient(transparent, rgba(49,47,79,.94) 55%); }
   .promise-caption p { max-width:640px; }
@@ -249,10 +257,20 @@
     if (!loaded[j]) return;
     var im = imgs[j];
     var cw = canvas.width, ch = canvas.height;
-    var s = Math.max(cw / im.width, ch / im.height);
-    var w = im.width * s, h = im.height * s;
     ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
+    if (ch > cw) {
+      // Portrait (phones): cover-fit would crop the film to a sliver. Fit the
+      // whole frame instead, over a stretched copy that fills the bands (the
+      // film background is a smooth gradient, so the stretch is invisible).
+      ctx.drawImage(im, 0, 0, cw, ch);
+      var sc = Math.min(cw / im.width, ch / im.height);
+      var fw = im.width * sc, fh = im.height * sc;
+      ctx.drawImage(im, (cw - fw) / 2, (ch - fh) / 2, fw, fh);
+    } else {
+      var s = Math.max(cw / im.width, ch / im.height);
+      var w = im.width * s, h = im.height * s;
+      ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
+    }
   }
 
   function resize() {
