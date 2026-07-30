@@ -102,6 +102,9 @@
        The film section is shorter on mobile so the first video arrives right
        as the rotation finishes (no long empty stretch under the strip). */
     #film { height:170vh; }
+    /* stage is exactly the strip: nothing empty trails it, so the first video
+       hands off directly under the phones when the rotation completes */
+    #film .stage { height:79.2vw; }
     #film .titles { padding-top:0; height:79.2vw; justify-content:center; }
     .story { margin:36px 16px; }
     .story video, .story img.fallback { border-radius:20px; }
