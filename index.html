@@ -111,7 +111,8 @@
        vertically centered on the strip (strip height = 79.2vw at this crop) */
     #film .titles { padding-top:0; height:79.2vw; justify-content:center; }
     .mhero {
-      display:block; position:absolute; left:16px; right:16px; bottom:60px;
+      display:block; position:absolute; left:16px; right:16px;
+      top:calc(79.2vw + 20px); /* right under the film strip */
       text-align:center; pointer-events:none;
     }
     .mhero h1 { font-size:24px; font-weight:800; line-height:1.25; color:var(--navy); }
